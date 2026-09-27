@@ -1,0 +1,21 @@
+{
+  "deploymentEnabled": true,
+  "chainId": 11155111,
+  "network": "sepolia",
+  "contract": "src/VestingAccounting.sol:VestingAccounting",
+  "script": "script/DeploySepolia.s.sol:DeploySepolia",
+  "compiler": "0.8.24+commit.e11b9ed9",
+  "constructorSignature": "constructor(address beneficiary_,uint256 grant_,uint256 start_,uint256 cliff_,uint256 duration_)",
+  "constructorArguments": [
+    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "1000003",
+    "1800000000",
+    "604800",
+    "2592000"
+  ],
+  "status": "pending_rpc_and_funded_signer",
+  "contractAddress": null,
+  "deploymentTransactionHash": null,
+  "explorerLink": null,
+  "reason": "No Sepolia RPC or funded deployment signer was supplied in this task environment. No transaction was broadcast."
+}
