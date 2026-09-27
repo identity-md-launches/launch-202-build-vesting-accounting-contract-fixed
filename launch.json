@@ -1,0 +1,28 @@
+{
+  "kind": "evm_project",
+  "token": {
+    "contract": "LaunchToken",
+    "name": "Vesting Accounting Launch Token",
+    "symbol": "VEST",
+    "decimals": 18
+  },
+  "pool": {
+    "pairedCurrency": "0x0000000000000000000000000000000000000000",
+    "fee": 3000,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336"
+  },
+  "contracts": [
+    {
+      "contract": "VestingAccounting",
+      "constructorArgs": [
+        "$owner",
+        "1000003",
+        "1800000000",
+        "604800",
+        "2592000"
+      ]
+    }
+  ],
+  "notes": "Manifest for the accepted vesting-accounting tree (commit 8ceb991). Solidity 0.8.24, Shanghai EVM, optimizer 200 runs, bytecode_hash none, offline build with no fetched dependencies; forge build and forge test pass (30 tests, 6 fuzz tests at 1000 runs).\n\nAPPLICATION CONTRACT. src/VestingAccounting.sol:VestingAccounting, nonpayable constructor(address beneficiary_, uint256 grant_, uint256 start_, uint256 cliff_, uint256 duration_). Arguments in the manifest: beneficiary_ = $owner (policy owner); grant_ = 1000003 abstract units; start_ = 1800000000 (2027-01-15 08:00:00 UTC); cliff_ = 604800 seconds offset from start (7 days); duration_ = 2592000 seconds (30 days, end 1802592000). Constructor rejects a zero beneficiary, zero duration, cliff greater than duration, and start + duration overflow. It has no owner, no admin, no upgrade, no ETH acceptance, no external calls, no DELEGATECALL/CALLCODE/SELFDESTRUCT, and holds no funds. It does not reference the launch token or any other contract. The only privileged actor is the beneficiary, who alone may call claim() to record accounting units; vestedAt, vested, claimable, claimed and the schedule getters are public views. Vesting is 0 before start+cliff, floor(grant*(t-start)/duration) from the cliff, exactly grant at and after end; repeated claims can never exceed grant.\n\nBENEFICIARY CHOICE. The repository's standalone demo script (script/DemoConfig.sol, deployment/sepolia.json) uses the public Anvil test account #1 (0x70997970C51812dc3A010C7d01b50e0d17dc79C8) as beneficiary. That key is public, so naming it here would hand the only privileged role to anyone. The manifest rules require privileged roles to come from policy, so the factory launch uses $owner instead. All other arguments equal the documented demo parameters. The standalone deployment record in deployment/sepolia.json has status pending: no Sepolia broadcast has occurred and no address, tx hash or explorer link exists.\n\nTOKEN: NOT PRESENT IN THE ACCEPTED TREE. The accepted brief said 'do not create a token', and this manifest assignment may change only launch.json, so no ERC-20 source exists in this commit. The schema requires a token entry, so the entry above names an identifier, LaunchToken, that has no matching contract artifact. Attestation, the Token protected floor and the Project protected floor will not find creation code for it and must not proceed until a builder assignment adds a compliant fixed-supply token (no constructor arguments, 18 decimals, 10^27 minor units minted to msg.sender, no mint/admin/proxy/selfdestruct) named LaunchToken, or the brief is revised to a tokenless launch. The name and symbol above are placeholders for that future contract. This gap is the blocking finding for this launch; nothing in this manifest resolves it.\n\nPOOL. Native ETH pair (zero address), fee 3000, tickSpacing 60, initialPrice 79228162514264337593543950336 (sqrtPriceX96 for 1:1); no hook. Under Sepolia policy v5 the deployer derives the opening price from initialMarketCapWei, so this value is only a legacy fallback.\n\nREPRODUCTION. forge build --offline; forge test --offline; forge fmt --check. Requires solc 0.8.24 present in the local compiler cache."
+}
